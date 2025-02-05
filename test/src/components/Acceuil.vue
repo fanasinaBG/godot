@@ -1,112 +1,249 @@
 <template>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light full-width">
-        <div class="container-fluid">
-            <!-- Logo -->
-            <a class="navbar-brand" href="#">
-                <img :src="logoSrc" class="logo" alt="Bootstrap Logo">
-            </a>
-
-            <!-- Bouton menu burger (mobile) -->
-            <button class="navbar-toggler" type="button" @click="toggleMenu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- Contenu du menu -->
-            <div class="collapse navbar-collapse custom-menu" :class="{ show: isOpen }">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Accueil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Services</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Contact</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+    <nav class="navbar">
+      <div class="navbar-brand">Mon Site</div>
+      
+      <!-- Menu principal -->
+      <ul :class="['navbar-menu', { 'active': isMenuOpen }]">
+        <li class="navbar-item"><a href="#">Accueil</a></li>
+        <li class="navbar-item"><a href="#">À propos</a></li>
+        <li class="navbar-item"><a href="#">Services</a></li>
+        <li class="navbar-item"><a href="#">Contact</a></li>
+      </ul>
     </nav>
-</template>
-
-<script>
-export default {
+  
+    <!-- Liste fixe à gauche -->
+    <div class="fixed-list">
+      <ul>
+        <li><router-link to="/liste1">Lien 1</router-link></li>
+        <li><router-link to="/acceuil">Lien 2</router-link></li>
+        <li><a href="#">Lien 3</a></li>
+      </ul>
+    </div>
+  
+    <!-- Mini-navbar avec barre de recherche -->
+    <div class="search-navbar">
+      <input type="text" placeholder="Rechercher..." class="search-input">
+    </div>
+    <router-view />
+  </template>
+  
+  <script>
+  export default {
     data() {
-        return {
-            isOpen: false,
-            logoSrc: "../assets/cuisine.jpg", // Remplace avec ton chemin d'image
-        };
+      return {
+        isMenuOpen: false,
+      };
     },
     methods: {
-        toggleMenu() {
-            this.isOpen = !this.isOpen;
-        },
+      toggleMenu() {
+        this.isMenuOpen = !this.isMenuOpen;
+      },
     },
-};
-</script>
-
-<style scoped>
-/* Supprime les marges et assure un affichage pleine largeur */
-.full-width {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-/* Permet à la navbar d'occuper toute la largeur */
-.navbar {
-    width: 100%;
-    padding: 0;
-}
-
-/* Supprime les marges par défaut de .container-fluid */
-.container-fluid {
-    width: 100%;
-    padding: 0 15px; /* Ajoute un léger padding pour éviter que le menu touche les bords */
-}
-
-/* Ajuste la taille du logo */
-.logo {
-    width: 70px; /* Taille plus grande pour desktop */
-    height: auto;
-}
-
-/* Assure que le menu occupe toute la largeur */
-.custom-menu {
-    width: 100%;
-}
-
-/* Ajuste le menu et centre en mode mobile */
-.navbar-nav {
+  };
+  </script>
+  
+  <style scoped>
+  /* NAVBAR PRINCIPAL */
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    padding: 10px 20px;
+    z-index: 1000;
+  }
+  
+  /* STYLE DE LA MARQUE */
+  .navbar-brand {
+    color: white;
+    font-size: 1.5rem;
+  }
+  
+  /* MENU PRINCIPAL */
+  .navbar-menu {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .navbar-item {
+    margin-left: 20px;
+  }
+  
+  .navbar-item a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+  }
+  
+  /* LISTE FIXE À GAUCHE */
+  .fixed-list {
+    position: fixed;
+    top: 57px;
+    bottom: 0;
+    left: 0;
+    background-color: #444;
+    width: 200px;
+    border-top-right-radius: 5px;
+    padding-top: 10px;
+    transition: width 0.3s ease;
+  }
+  
+  .fixed-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .fixed-list li {
+    padding: 10px;
+  }
+  
+  .fixed-list a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    display: block;
+  }
+  
+  .fixed-list a:hover {
+    background-color: #555;
+  }
+  
+  /* MINI-NAVBAR AVEC RECHERCHE */
+  .search-navbar {
+    position: fixed;
+    top: 57px; /* Juste sous le navbar principal */
+    left: 200px; /* Aligné à droite de la liste fixe */
+    width: calc(100% - 200px);
+    background-color: #222;
+    padding: 10px;
+    display: flex;
     justify-content: flex-end;
-}
-
-/* Responsive : ajustement du logo et du menu */
-@media (max-width: 992px) {
-    .logo {
-        width: 60px; /* Réduit la taille du logo sur tablette */
+    transition: all 0.3s ease;
+  }
+  
+  .search-input {
+    width: 250px;
+    padding: 7px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    margin-top: 5px;
+  }
+  
+  /* TABLEAU SOUS LE SEARCH NAVBAR */
+  .table-container {
+    position: absolute;
+    top: 110px; /* Ajuste la position sous la barre de recherche */
+    left: 200px; /* Aligné avec la liste */
+    width: calc(100% - 220px);
+    padding: 20px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  th {
+    background-color: #333;
+    color: white;
+  }
+  
+  tr:hover {
+    background-color: #f5f5f5;
+  }
+  
+  /* RESPONSIVE */
+  @media (max-width: 1024px) {
+    .fixed-list {
+      width: 160px; /* Réduction de la liste sur tablette */
     }
-
-    .navbar-nav {
-        text-align: center;
-        width: 100%;
+  
+    .search-navbar {
+      left: 160px;
+      width: calc(100% - 160px);
     }
-}
-
-@media (max-width: 768px) {
-    .logo {
-        width: 50px; /* Encore plus petit sur mobile */
+  
+    .table-container {
+      left: 160px;
+      width: calc(100% - 180px);
     }
-
+  }
+  
+  @media (max-width: 768px) {
     .navbar {
-        text-align: center;
+      padding: 10px;
     }
-
-    .navbar-nav {
-        flex-direction: column; /* Affichage vertical du menu */
-        align-items: center;
+  
+    .fixed-list {
+      width: 130px; /* Encore plus réduit sur mobile */
     }
-}
-</style>
+  
+    .fixed-list li {
+      padding: 8px;
+    }
+  
+    .fixed-list a {
+      font-size: 0.9rem;
+    }
+  
+    .search-navbar {
+      left: 0;
+      width: 100%;
+      justify-content: center;
+      padding: 10px;
+    }
+  
+    .search-input {
+      width: 90%;
+      max-width: 300px;
+    }
+  
+    .table-container {
+      left: 0;
+      width: 100%;
+      padding: 10px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .fixed-list {
+      display: none; /* Cache la liste sur très petits écrans */
+    }
+  
+    .search-navbar {
+      width: 100%;
+      left: 0;
+      justify-content: center;
+    }
+  
+    .table-container {
+      width: 100%;
+      left: 0;
+      padding: 5px;
+    }
+  
+    th, td {
+      padding: 8px;
+    }
+  }
+  </style>
+  
