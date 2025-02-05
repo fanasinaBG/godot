@@ -11,6 +11,7 @@
   "dependencies": {
     "bootstrap": "^5.3.3",
     "sass": "^1.83.4",
+    "test": "file:",
     "vue": "^3.4.29",
     "vue-router": "^4.5.0"
   },
