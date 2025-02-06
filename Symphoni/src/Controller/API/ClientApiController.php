@@ -12,9 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class AdminApiController extends AbstractController
+class ClientApiController extends AbstractController
 {
-    #[Route("/api/admins", methods: "POST")]
+    #[Route("/api/clients", methods: "POST")]
     // #[TokenRequired]
     public function create(Request $request, EntityManagerInterface $entityManager)
     {
@@ -24,7 +24,7 @@ class AdminApiController extends AbstractController
             return new JsonResponse(['error' => 'Invalid data'], 400);
         }
 
-        $Amdin = new Admin();
+        $client = new Client();
         $client->setNom($data['nom']);
         $client->setEmail($data['email']);
         $client->setMdp($data['mdp']);
@@ -32,10 +32,10 @@ class AdminApiController extends AbstractController
         $entityManager->persist($client);
         $entityManager->flush();
 
-        return new JsonResponse(['status' => 'Admin created'], 201);
+        return new JsonResponse(['status' => 'Client created'], 201);
     }
 
-    #[Route("/api/admins/{id}", methods: ["GET"])]
+    #[Route("/api/clients/{id}", methods: ["GET"])]
     public function findById(ClientRepository $repository, int $id)
     {
         $client = $repository->find($id);
@@ -47,21 +47,21 @@ class AdminApiController extends AbstractController
         return $this->json($client);
     }
 
-    #[Route("/api/admins/login", methods: ["POST"])]
+    #[Route("/api/clients/login", methods: ["POST"])]
     public function login(Request $request, ClientRepository $repository, EntityManagerInterface $em)
     {
         $data = json_decode($request->getContent(), true);
         $email = $data['email'] ?? '';
         $password = $data['mdp'] ?? '';
 
-        $admin = $repository->findOneBy(['email' => $email]);
+        $client = $repository->findOneBy(['email' => $email]);
 
-        if (!$admin || $admin->getMdp() !== $password) {
+        if (!$client || $client->getMdp() !== $password) {
             return new JsonResponse(['message' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
         }
 
-        // Génération d'un token basé sur l'objet admin
-        $tokenData = $admin->getId() . $admin->getNom() . $admin->getEmail() . time();
+        // Génération d'un token basé sur l'objet client
+        $tokenData = $client->getId() . $client->getNom() . $client->getEmail() . time();
         $token = hash('sha256', $tokenData);
 
         return new JsonResponse(['token' => $token]);
