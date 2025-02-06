@@ -2,8 +2,8 @@
 
 namespace App\Controller\API;
 
-use App\Entity\Client;
-use App\Repository\ClientRepository;
+use App\Entity\Admin;
+use App\Repository\AdminRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;  
@@ -24,12 +24,12 @@ class AdminApiController extends AbstractController
             return new JsonResponse(['error' => 'Invalid data'], 400);
         }
 
-        $Amdin = new Admin();
-        $client->setNom($data['nom']);
-        $client->setEmail($data['email']);
-        $client->setMdp($data['mdp']);
+        $Admin = new Admin();
+        $Admin->setNom($data['nom']);
+        $Admin->setEmail($data['email']);
+        $Admin->setMdp($data['mdp']);
 
-        $entityManager->persist($client);
+        $entityManager->persist($Admin);
         $entityManager->flush();
 
         return new JsonResponse(['status' => 'Admin created'], 201);
@@ -48,7 +48,7 @@ class AdminApiController extends AbstractController
     }
 
     #[Route("/api/admins/login", methods: ["POST"])]
-    public function login(Request $request, ClientRepository $repository, EntityManagerInterface $em)
+    public function login(Request $request, AdminRepository $repository, EntityManagerInterface $em)
     {
         $data = json_decode($request->getContent(), true);
         $email = $data['email'] ?? '';

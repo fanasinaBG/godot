@@ -63,4 +63,21 @@ class Admin
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        // Crée une représentation sous forme de chaîne de caractères de l'objet
+        return $this->getId() . $this->getNom() . $this->getEmail();
+    }
+
+    public function generateToken(): string
+    {
+        // Utilise la méthode __toString() pour obtenir la chaîne de l'objet
+        $data = $this->__toString() . uniqid('', true);
+        
+        // Crée un hash sécurisé basé sur la représentation de l'objet
+        $token = hash('sha256', $data);
+
+        return $token;
+    }
 }
