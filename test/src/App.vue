@@ -1,10 +1,12 @@
 <script >
 import HelloWorld from './components/HelloWorld.vue'
 import Acceuil from './components/Acceuil.vue'
+import Login from './components/Login.vue'
 
 export default {
   components: {
     Acceuil,
+    Login,
   },
 };
 </script>
@@ -13,7 +15,7 @@ export default {
   <div class="container">
     <header>
     </header>
-    <Acceuil />
+    <Login />
 
     <main>
     </main>
