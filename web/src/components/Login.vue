@@ -4,14 +4,13 @@
       <form @submit.prevent="login">
         <div class="input-group">
           <label for="email">Email</label>
-          <input type="email" v-model="email" required />
+          <input type="email" id="email" v-model="email" autocomplete="email" required />
         </div>
-  
+
         <div class="input-group">
           <label for="password">Mot de passe</label>
-          <input type="password" v-model="password" required />
+          <input type="password" id="password" v-model="password" autocomplete="current-password" required />
         </div>
-  
         <button type="submit">Se connecter</button>
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       </form>
@@ -19,6 +18,7 @@
   </template>
   
   <script>
+  import apiService from './../services/apiService';
   export default {
     data() {
       return {
@@ -28,19 +28,24 @@
       };
     },
     methods: {
-      login() {
-        const fakeUser = { email: "admin@example.com", password: "123456" };
-        
-        
-    //     const fakeUser = { email: "admin@example.com", password: "123456" };
-  
-       if (this.email === fakeUser.email && this.password === fakeUser.password) {
-          localStorage.setItem("isAuthenticated", "true");
-          this.$router.push("/acceuil"); // Redirige vers une page après connexion
-        } else {
-          this.errorMessage = "Email ou mot de passe incorrect.";
+      async login() {
+        try {
+          const response = await apiService.login(this.email, this.password);
+          this.token = response.data.token;
+          console.log(response.data);
+          console.log(`Navigating to: ${to.path}, Authenticated: ${!!token}`);
+          this.$router.push('/acceuil');
+          localStorage.setItem('token', this.token);
+          if (to.meta.requiresAuth && !token) {
+            next("/login"); // Redirection si non authentifié
+          } else {
+            next(); // Autorise la navigation
+          }
+        } catch (error) {
+          console.error('Erreur lors de la connexion :', error);
+          this.errorMessage = 'Email ou mot de passe incorrect.';
         }
-       },
+      }
      },
   };
   </script>
