@@ -1,11 +1,10 @@
 <?php
-
+// StockIngredient.php
 namespace App\Entity;
 
 use App\Repository\StockIngredientRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: StockIngredientRepository::class)]
 class StockIngredient
@@ -13,56 +12,35 @@ class StockIngredient
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['stock:read','stock:liste'])]
     private ?int $id = null;
 
-    /**
-     * @var Collection<int, ingredient>
-     */
-    #[ORM\OneToMany(targetEntity: ingredient::class, mappedBy: 'stockIngredient')]
-    private Collection $idIngredient;
+    #[ORM\ManyToOne(targetEntity: Ingredient::class, inversedBy: 'stockIngredients')]
+#[ORM\JoinColumn(name: 'ingredient_id', referencedColumnName: 'id')]
+    #[Groups(['stock:liste'])]
+    private ?Ingredient $ingredient = null; // Changement de la relation ManyToMany à ManyToOne
 
     #[ORM\Column]
+    #[Groups(['stock:read','stock:liste'])]
     private ?int $Entre = null;
 
     #[ORM\Column]
+    #[Groups(['stock:read','stock:liste'])]
     private ?int $Sortie = null;
-
-    public function __construct()
-    {
-        $this->idIngredient = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return Collection<int, ingredient>
-     */
-    public function getIdIngredient(): Collection
+    public function getIngredient(): ?Ingredient
     {
-        return $this->idIngredient;
+        return $this->ingredient;
     }
 
-    public function addIdIngredient(ingredient $idIngredient): static
+    public function setIngredient(?Ingredient $ingredient): self
     {
-        if (!$this->idIngredient->contains($idIngredient)) {
-            $this->idIngredient->add($idIngredient);
-            $idIngredient->setStockIngredient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeIdIngredient(ingredient $idIngredient): static
-    {
-        if ($this->idIngredient->removeElement($idIngredient)) {
-            // set the owning side to null (unless already changed)
-            if ($idIngredient->getStockIngredient() === $this) {
-                $idIngredient->setStockIngredient(null);
-            }
-        }
+        $this->ingredient = $ingredient;
 
         return $this;
     }

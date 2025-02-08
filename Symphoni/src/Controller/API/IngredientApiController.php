@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Controller\Api;
+namespace App\Controller\API;
 
 use App\Entity\Ingredient;
 use App\Repository\IngredientRepository;
+use App\Attribute\TokenRequired;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,10 +14,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[Route('/api/ingredients')]
 class IngredientApiController extends AbstractController
 {
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
 
     #[Route('', methods: ['GET'])]
     #[TokenRequired]
-    public function index(IngredientRepository $ingredientRepository,EntityManagerInterface $entityManager): JsonResponse
+    public function index(IngredientRepository $ingredientRepository): JsonResponse
     {
         $ingredients = $ingredientRepository->findAll();
         $data = array_map(fn(Ingredient $ingredient) => [
@@ -29,7 +36,7 @@ class IngredientApiController extends AbstractController
 
     #[Route('/{id}', methods: ['GET'])]
     #[TokenRequired]
-    public function show(Ingredient $ingredient = null,EntityManagerInterface $entityManager): JsonResponse
+    public function show(?Ingredient $ingredient): JsonResponse
     {
         if (!$ingredient) {
             return $this->json(['error' => 'Ingredient not found'], JsonResponse::HTTP_NOT_FOUND);
@@ -43,7 +50,7 @@ class IngredientApiController extends AbstractController
 
     #[Route('', methods: ['POST'])]
     #[TokenRequired]
-    public function create(Request $request,EntityManagerInterface $entityManager): JsonResponse
+    public function create(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $nom = $data['nom'] ?? null;
@@ -66,7 +73,7 @@ class IngredientApiController extends AbstractController
 
     #[Route('/{id}', methods: ['PUT'])]
     #[TokenRequired]
-    public function update(Request $request, Ingredient $ingredient = null,EntityManagerInterface $entityManager): JsonResponse
+    public function update(Request $request, ?Ingredient $ingredient): JsonResponse
     {
         if (!$ingredient) {
             return $this->json(['error' => 'Ingredient not found'], JsonResponse::HTTP_NOT_FOUND);
@@ -87,7 +94,7 @@ class IngredientApiController extends AbstractController
 
     #[Route('/{id}', methods: ['DELETE'])]
     #[TokenRequired]
-    public function delete(Ingredient $ingredient = null,EntityManagerInterface $entityManager): JsonResponse
+    public function delete(?Ingredient $ingredient): JsonResponse
     {
         if (!$ingredient) {
             return $this->json(['error' => 'Ingredient not found'], JsonResponse::HTTP_NOT_FOUND);
