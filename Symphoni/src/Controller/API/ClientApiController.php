@@ -74,6 +74,24 @@ class ClientApiController extends AbstractController
         ]);
     }
 
+    #[Route('/api/client/commande', name: 'list', methods: ['GET'])]
+    public function listClients(ClientRepository $clientRepository): JsonResponse
+    {
+        $clients = $clientRepository->findAll();
+
+        $data = [];
+        foreach ($clients as $client) {
+            $data[] = [
+                'id' => $client->getId(),
+                'nom' => $client->getNom(),
+                'email' => $client->getEmail(),
+                // Ajouter d'autres informations du client si nécessaire
+            ];
+        }
+
+        return new JsonResponse($data);
+    }
+
     #[Route("/api/clients/login", methods: ["POST"])]
     public function login(Request $request, ClientRepository $repository, EntityManagerInterface $em)
     {

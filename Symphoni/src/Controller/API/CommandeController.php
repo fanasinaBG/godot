@@ -70,6 +70,26 @@ class CommandeController extends AbstractController
         ]);
     }
 
+    #[Route('/en-cours', name: 'list_en_cours', methods: ['GET'])]
+    public function listCommandesEnCours(): JsonResponse
+    {
+        // Récupérer toutes les commandes en cours (statut "en cours" ou selon votre logique)
+        $commandes = $this->commandeRepository->findBy(['statue' => 'En cours']);
+
+        $data = [];
+        foreach ($commandes as $commande) {
+            $data[] = [
+                'id' => $commande->getId(),
+                'prix_total' => $commande->getPrixTotal(),
+                'statue' => $commande->getStatue(),
+                'client_id' => $commande->getClient()->getId(),
+                'relationplat_commandes' => $commande->getRelationplatCommandes()->toArray(),
+            ];
+        }
+
+        return new JsonResponse($data);
+    }
+
     #[Route('/{id}', name: 'update', methods: ['PUT'])]
     public function updateCommande(Request $request, int $id): JsonResponse
     {
