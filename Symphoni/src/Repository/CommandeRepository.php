@@ -40,4 +40,28 @@ class CommandeRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+
+
+    public function getTotalVentes(): int
+    {
+        return (int) $this->createQueryBuilder('c')
+            ->select('SUM(c.prixTotal)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function getTotalPlatsServis(): int
+    {
+        return (int) $this->createQueryBuilder('c')
+            ->select('SUM(r.nombre)')
+            ->join('c.relationplatCommandes', 'r')  // Utilisation du bon nom de la propriété
+            ->where('c.statue = :statut')  // Vérifie bien que c'est `Statue` et non `statue`
+            ->setParameter('statut', 'Livrée')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+
+
 }

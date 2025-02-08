@@ -6,6 +6,7 @@ use App\Repository\RelationplatCommandeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RelationplatCommandeRepository::class)]
 class RelationplatCommande
@@ -13,93 +14,50 @@ class RelationplatCommande
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['relationplatcommande:read', 'relationplatcommande:write'])]
     private ?int $id = null;
 
-    /**
-     * @var Collection<int, Commande>
-     */
-    #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'relationplatCommande')]
-    private Collection $idCommade;
+    #[ORM\ManyToOne(targetEntity: Commande::class, inversedBy: 'relationplatCommandes')]
+    #[ORM\JoinColumn(name: "commande_id", referencedColumnName: "id", nullable: false)]
+    private ?Commande $commande = null;
 
-    /**
-     * @var Collection<int, Plat>
-     */
-    #[ORM\OneToMany(targetEntity: Plat::class, mappedBy: 'relationplatCommande')]
-    private Collection $idPlat;
+    #[ORM\ManyToOne(targetEntity: Plat::class, inversedBy: 'relationplatCommandes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Plat $plat = null;
 
     #[ORM\Column]
+    #[Groups(['relationplatcommande:read', 'relationplatcommande:write'])]
     private ?int $nombre = null;
 
     #[ORM\Column]
-    private ?int $Prix = null;
-
-    public function __construct()
-    {
-        $this->idCommade = new ArrayCollection();
-        $this->idPlat = new ArrayCollection();
-    }
+    #[Groups(['relationplatcommande:read', 'relationplatcommande:write'])]
+    private ?int $prix = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return Collection<int, Commande>
-     */
-    public function getIdCommade(): Collection
+    public function getCommande(): ?Commande
     {
-        return $this->idCommade;
+        return $this->commande;
     }
 
-    public function addIdCommade(Commande $idCommade): static
+    public function setCommande(?Commande $commande): static
     {
-        if (!$this->idCommade->contains($idCommade)) {
-            $this->idCommade->add($idCommade);
-            $idCommade->setRelationplatCommande($this);
-        }
+        $this->commande = $commande;
 
         return $this;
     }
 
-    public function removeIdCommade(Commande $idCommade): static
+    public function getPlat(): ?Plat
     {
-        if ($this->idCommade->removeElement($idCommade)) {
-            // set the owning side to null (unless already changed)
-            if ($idCommade->getRelationplatCommande() === $this) {
-                $idCommade->setRelationplatCommande(null);
-            }
-        }
-
-        return $this;
+        return $this->plat;
     }
 
-    /**
-     * @return Collection<int, Plat>
-     */
-    public function getIdPlat(): Collection
+    public function setPlat(?Plat $plat): static
     {
-        return $this->idPlat;
-    }
-
-    public function addIdPlat(Plat $idPlat): static
-    {
-        if (!$this->idPlat->contains($idPlat)) {
-            $this->idPlat->add($idPlat);
-            $idPlat->setRelationplatCommande($this);
-        }
-
-        return $this;
-    }
-
-    public function removeIdPlat(Plat $idPlat): static
-    {
-        if ($this->idPlat->removeElement($idPlat)) {
-            // set the owning side to null (unless already changed)
-            if ($idPlat->getRelationplatCommande() === $this) {
-                $idPlat->setRelationplatCommande(null);
-            }
-        }
+        $this->plat = $plat;
 
         return $this;
     }
@@ -118,12 +76,12 @@ class RelationplatCommande
 
     public function getPrix(): ?int
     {
-        return $this->Prix;
+        return $this->prix;
     }
 
-    public function setPrix(int $Prix): static
+    public function setPrix(int $prix): static
     {
-        $this->Prix = $Prix;
+        $this->prix = $prix;
 
         return $this;
     }
