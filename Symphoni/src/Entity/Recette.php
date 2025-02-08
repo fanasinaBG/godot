@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+
 #[ORM\Entity(repositoryClass: RecetteRepository::class)]
 class Recette
 {
@@ -16,19 +17,22 @@ class Recette
     private ?int $id = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?plat $idPlat = null;
+    private ?Plat $idPlat = null;
 
     #[ORM\Column]
     private ?int $temps = null;
 
     /**
-     * @var Collection<int, vilany>
+     * @var Collection<int, Vilany>
      */
-    #[ORM\OneToMany(targetEntity: vilany::class, mappedBy: 'recette')]
+    #[ORM\OneToMany(targetEntity: Vilany::class, mappedBy: 'recette')]
     private Collection $idVilany;
 
-    #[ORM\ManyToOne(inversedBy: 'idRecette')]
-    private ?RelationIngredientRecette $relationIngredientRecette = null;
+    /**
+     * @var Collection<int, RelationIngredientRecette>
+     */
+    #[ORM\OneToMany(targetEntity: RelationIngredientRecette::class, mappedBy: 'recette')]
+    private Collection $relationIngredientRecettes;
 
     #[ORM\OneToOne(mappedBy: 'idRecette', cascade: ['persist', 'remove'])]
     private ?Plat $plat = null;
@@ -36,6 +40,7 @@ class Recette
     public function __construct()
     {
         $this->idVilany = new ArrayCollection();
+        $this->relationIngredientRecettes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -43,15 +48,14 @@ class Recette
         return $this->id;
     }
 
-    public function getIdPlat(): ?plat
+    public function getIdPlat(): ?Plat
     {
         return $this->idPlat;
     }
 
-    public function setIdPlat(?plat $idPlat): static
+    public function setIdPlat(?Plat $idPlat): static
     {
         $this->idPlat = $idPlat;
-
         return $this;
     }
 
@@ -63,19 +67,18 @@ class Recette
     public function setTemps(int $temps): static
     {
         $this->temps = $temps;
-
         return $this;
     }
 
     /**
-     * @return Collection<int, vilany>
+     * @return Collection<int, Vilany>
      */
     public function getIdVilany(): Collection
     {
         return $this->idVilany;
     }
 
-    public function addIdVilany(vilany $idVilany): static
+    public function addIdVilany(Vilany $idVilany): static
     {
         if (!$this->idVilany->contains($idVilany)) {
             $this->idVilany->add($idVilany);
@@ -85,10 +88,9 @@ class Recette
         return $this;
     }
 
-    public function removeIdVilany(vilany $idVilany): static
+    public function removeIdVilany(Vilany $idVilany): static
     {
         if ($this->idVilany->removeElement($idVilany)) {
-            // set the owning side to null (unless already changed)
             if ($idVilany->getRecette() === $this) {
                 $idVilany->setRecette(null);
             }
@@ -97,14 +99,31 @@ class Recette
         return $this;
     }
 
-    public function getRelationIngredientRecette(): ?RelationIngredientRecette
+    /**
+     * @return Collection<int, RelationIngredientRecette>
+     */
+    public function getRelationIngredientRecettes(): Collection
     {
-        return $this->relationIngredientRecette;
+        return $this->relationIngredientRecettes;
     }
 
-    public function setRelationIngredientRecette(?RelationIngredientRecette $relationIngredientRecette): static
+    public function addRelationIngredientRecette(RelationIngredientRecette $relationIngredientRecette): static
     {
-        $this->relationIngredientRecette = $relationIngredientRecette;
+        if (!$this->relationIngredientRecettes->contains($relationIngredientRecette)) {
+            $this->relationIngredientRecettes->add($relationIngredientRecette);
+            $relationIngredientRecette->setRecette($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRelationIngredientRecette(RelationIngredientRecette $relationIngredientRecette): static
+    {
+        if ($this->relationIngredientRecettes->removeElement($relationIngredientRecette)) {
+            if ($relationIngredientRecette->getRecette() === $this) {
+                $relationIngredientRecette->setRecette(null);
+            }
+        }
 
         return $this;
     }
@@ -116,12 +135,10 @@ class Recette
 
     public function setPlat(?Plat $plat): static
     {
-        // unset the owning side of the relation if necessary
         if ($plat === null && $this->plat !== null) {
             $this->plat->setIdRecette(null);
         }
 
-        // set the owning side of the relation if necessary
         if ($plat !== null && $plat->getIdRecette() !== $this) {
             $plat->setIdRecette($this);
         }

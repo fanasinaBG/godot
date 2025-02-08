@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use App\Service\JwtTokenManager;
+use App\Entity\Vilany;
 
 class PlatApiController extends AbstractController
 {
@@ -140,6 +141,40 @@ class PlatApiController extends AbstractController
         $this->entityManager->flush();
 
         return new JsonResponse(['message' => 'Plat updated'], Response::HTTP_OK);
+    }
+
+    #[Route('/api/plats/{id}/add-recette', methods: ['POST'])]
+    public function addRecetteToPlat(int $id, Request $request, PlatRepository $platRepository): JsonResponse
+    {
+        // Get the Plat entity
+        $plat = $platRepository->find($id);
+
+        if (!$plat) {
+            return new JsonResponse(['message' => 'Plat not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        // Get the Recette ID from the request
+        $data = json_decode($request->getContent(), true);
+        $idRecette = $data['idRecette'] ?? null;
+
+        if (!$idRecette) {
+            return new JsonResponse(['message' => 'Missing recette ID'], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Get the Recette entity
+        $recette = $this->entityManager->getRepository(Recette::class)->find($idRecette);
+
+        if (!$recette) {
+            return new JsonResponse(['message' => 'Recette not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        // Set the recette on the Plat entity
+        $plat->setIdRecette($recette);
+
+        // Persist changes and flush
+        $this->entityManager->flush();
+
+        return new JsonResponse(['message' => 'Recette added to Plat'], Response::HTTP_OK);
     }
 
     #[Route('/api/plats/{id}', methods: ['DELETE'])]

@@ -21,8 +21,11 @@ class Ingredient
     #[Groups(['stock:liste'])]
     private ?string $nom = null;
 
-    #[ORM\ManyToOne(inversedBy: 'idIngredient')]
-    private ?RelationIngredientRecette $relationIngredientRecette = null;
+    /**
+     * @var Collection<int, RelationIngredientRecette>
+     */
+    #[ORM\OneToMany(mappedBy: 'ingredient', targetEntity: RelationIngredientRecette::class)]
+    private Collection $relationIngredientRecettes;
 
     /**
      * @var Collection<int, StockIngredient>
@@ -32,6 +35,7 @@ class Ingredient
 
     public function __construct()
     {
+        $this->relationIngredientRecettes = new ArrayCollection();
         $this->stockIngredients = new ArrayCollection();
     }
 
@@ -51,14 +55,32 @@ class Ingredient
         return $this;
     }
 
-    public function getRelationIngredientRecette(): ?RelationIngredientRecette
+    /**
+     * @return Collection<int, RelationIngredientRecette>
+     */
+    public function getRelationIngredientRecettes(): Collection
     {
-        return $this->relationIngredientRecette;
+        return $this->relationIngredientRecettes;
     }
 
-    public function setRelationIngredientRecette(?RelationIngredientRecette $relationIngredientRecette): static
+    public function addRelationIngredientRecette(RelationIngredientRecette $relationIngredientRecette): static
     {
-        $this->relationIngredientRecette = $relationIngredientRecette;
+        if (!$this->relationIngredientRecettes->contains($relationIngredientRecette)) {
+            $this->relationIngredientRecettes->add($relationIngredientRecette);
+            $relationIngredientRecette->setIngredient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRelationIngredientRecette(RelationIngredientRecette $relationIngredientRecette): static
+    {
+        if ($this->relationIngredientRecettes->removeElement($relationIngredientRecette)) {
+            if ($relationIngredientRecette->getIngredient() === $this) {
+                $relationIngredientRecette->setIngredient(null);
+            }
+        }
+
         return $this;
     }
 
@@ -90,4 +112,4 @@ class Ingredient
 
         return $this;
     }
-}  
+}

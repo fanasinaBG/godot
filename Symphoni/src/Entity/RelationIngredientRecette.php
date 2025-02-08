@@ -16,25 +16,24 @@ class RelationIngredientRecette
     private ?int $id = null;
 
     /**
-     * @var Collection<int, ingredient>
+     * @var Collection<int, Ingredient>
      */
-    #[ORM\OneToMany(targetEntity: ingredient::class, mappedBy: 'relationIngredientRecette')]
-    private Collection $idIngredient;
+    #[ORM\ManyToOne(targetEntity: Ingredient::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Ingredient $idIngredient = null;  // Une seule relation à Ingredient ici
 
     /**
      * @var Collection<int, Recette>
      */
-    #[ORM\OneToMany(targetEntity: Recette::class, mappedBy: 'relationIngredientRecette')]
-    private Collection $idRecette;
+    #[ORM\ManyToOne(targetEntity: Recette::class)]  // Modifié pour référencer Recette
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Recette $idRecette = null;  // L'association correcte avec Recette
 
     #[ORM\Column]
     private ?int $nombre = null;
 
-
     public function __construct()
     {
-        $this->idIngredient = new ArrayCollection();
-        $this->idRecette = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -42,62 +41,26 @@ class RelationIngredientRecette
         return $this->id;
     }
 
-    /**
-     * @return Collection<int, ingredient>
-     */
-    public function getIdIngredient(): Collection
+    public function getIdIngredient(): ?Ingredient
     {
         return $this->idIngredient;
     }
 
-    public function addIdIngredient(ingredient $idIngredient): static
+    public function setIdIngredient(Ingredient $idIngredient): static
     {
-        if (!$this->idIngredient->contains($idIngredient)) {
-            $this->idIngredient->add($idIngredient);
-            $idIngredient->setRelationIngredientRecette($this);
-        }
+        $this->idIngredient = $idIngredient;
 
         return $this;
     }
 
-    public function removeIdIngredient(ingredient $idIngredient): static
-    {
-        if ($this->idIngredient->removeElement($idIngredient)) {
-            // set the owning side to null (unless already changed)
-            if ($idIngredient->getRelationIngredientRecette() === $this) {
-                $idIngredient->setRelationIngredientRecette(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Recette>
-     */
-    public function getIdRecette(): Collection
+    public function getIdRecette(): ?Recette
     {
         return $this->idRecette;
     }
 
-    public function addIdRecette(Recette $idRecette): static
+    public function setIdRecette(Recette $idRecette): static
     {
-        if (!$this->idRecette->contains($idRecette)) {
-            $this->idRecette->add($idRecette);
-            $idRecette->setRelationIngredientRecette($this);
-        }
-
-        return $this;
-    }
-
-    public function removeIdRecette(Recette $idRecette): static
-    {
-        if ($this->idRecette->removeElement($idRecette)) {
-            // set the owning side to null (unless already changed)
-            if ($idRecette->getRelationIngredientRecette() === $this) {
-                $idRecette->setRelationIngredientRecette(null);
-            }
-        }
+        $this->idRecette = $idRecette;
 
         return $this;
     }
@@ -111,6 +74,12 @@ class RelationIngredientRecette
     {
         $this->nombre = $nombre;
 
+        return $this;
+    }
+
+    public function addIdIngredient(Ingredient $ingredient): static
+    {
+        $this->idIngredient = $ingredient;  // L'affectation ici est une seule entité, pas une collection
         return $this;
     }
 }
