@@ -23,6 +23,9 @@ class Admin
     #[ORM\Column(length: 255)]
     private ?string $mdp = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $apiToken = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -70,14 +73,26 @@ class Admin
         return $this->getId() . $this->getNom() . $this->getEmail();
     }
 
-    public function generateToken(): string
-    {
-        // Utilise la méthode __toString() pour obtenir la chaîne de l'objet
-        $data = $this->__toString() . uniqid('', true);
+    // public function generateToken(): string
+    // {
+    //     // Utilise la méthode __toString() pour obtenir la chaîne de l'objet
+    //     $data = $this->__toString() . uniqid('', true);
         
-        // Crée un hash sécurisé basé sur la représentation de l'objet
-        $token = hash('sha256', $data);
+    //     // Crée un hash sécurisé basé sur la représentation de l'objet
+    //     $token = hash('sha256', $data);
 
-        return $token;
+    //     return $token;
+    // }
+
+    public function getApiToken(): ?string
+    {
+        return $this->apiToken;
+    }
+
+    public function setApiToken(string $apiToken): static
+    {
+        $this->apiToken = $apiToken;
+
+        return $this;
     }
 }

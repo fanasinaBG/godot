@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD:test/src/components/Login.vue
   <div class="login-container">
     <h2>Connexion</h2>
     <form @submit.prevent="login">
