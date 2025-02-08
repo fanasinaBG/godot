@@ -30,7 +30,9 @@
     </div>
 </template>
 <script>
-
+export default {
+  name: 'Liste1', // Nom du composant
+};
 </script>
 
 <style scoped>
