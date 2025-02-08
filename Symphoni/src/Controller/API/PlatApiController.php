@@ -24,7 +24,8 @@ class PlatApiController extends AbstractController
     }
 
     #[Route('/api/plats', methods: ['GET'])]
-    public function getAllPlats(PlatRepository $platRepository): JsonResponse
+    #[TokenRequired]
+    public function getAllPlats(PlatRepository $platRepository,EntityManagerInterface $entityManager): JsonResponse
     {
         $plats = $platRepository->findAll();
         $data = [];
@@ -41,7 +42,8 @@ class PlatApiController extends AbstractController
     }
 
     #[Route('/api/plats/{id}', methods: ['GET'])]
-    public function getPlat(int $id, PlatRepository $platRepository): JsonResponse
+    #[TokenRequired]
+    public function getPlat(int $id, PlatRepository $platRepository,EntityManagerInterface $entityManager): JsonResponse
     {
         $plat = $platRepository->find($id);
 
@@ -59,7 +61,8 @@ class PlatApiController extends AbstractController
     }
 
     #[Route('/api/plats', methods: ['POST'])]
-    public function createPlat(Request $request): JsonResponse
+    #[TokenRequired]
+    public function createPlat(Request $request,EntityManagerInterface $entityManager): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
@@ -81,7 +84,8 @@ class PlatApiController extends AbstractController
     }
 
     #[Route('/api/plats/{id}', methods: ['PUT'])]
-    public function updatePlat(int $id, Request $request, PlatRepository $platRepository): JsonResponse
+    #[TokenRequired]
+    public function updatePlat(int $id, Request $request, PlatRepository $platRepository,EntityManagerInterface $entityManager): JsonResponse
     {
         $plat = $platRepository->find($id);
 
@@ -103,7 +107,8 @@ class PlatApiController extends AbstractController
     }
 
     #[Route('/api/plats/{id}', methods: ['DELETE'])]
-    public function deletePlat(int $id, PlatRepository $platRepository): JsonResponse
+    #[TokenRequired]
+    public function deletePlat(int $id, PlatRepository $platRepository,EntityManagerInterface $entityManager): JsonResponse
     {
         $plat = $platRepository->find($id);
 
