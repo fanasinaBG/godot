@@ -3,9 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\CommandeRepository;
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
 class Commande
@@ -15,24 +15,22 @@ class Commande
     #[ORM\Column]
     private ?int $id = null;
 
-    /**
-     * @var Collection<int, Client>
-     */
-    #[ORM\OneToMany(targetEntity: Client::class, mappedBy: 'commande')]
-    private Collection $idClient;
-
     #[ORM\Column]
-    private ?int $PrixTotal = null;
+    private ?int $prixTotal = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Statue = null;
+    private ?string $statue = null;
 
-    #[ORM\ManyToOne(inversedBy: 'idCommade')]
-    private ?RelationplatCommande $relationplatCommande = null;
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: 'commandes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Client $client = null;
+
+    #[ORM\OneToMany(targetEntity: RelationplatCommande::class, mappedBy: 'commande')]
+    private Collection $relationplatCommandes;
 
     public function __construct()
     {
-        $this->idClient = new ArrayCollection();
+        $this->relationplatCommandes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -40,68 +38,56 @@ class Commande
         return $this->id;
     }
 
-    /**
-     * @return Collection<int, Client>
-     */
-    public function getIdClient(): Collection
-    {
-        return $this->idClient;
-    }
-
-    public function addIdClient(Client $idClient): static
-    {
-        if (!$this->idClient->contains($idClient)) {
-            $this->idClient->add($idClient);
-            $idClient->setCommande($this);
-        }
-
-        return $this;
-    }
-
-    public function removeIdClient(Client $idClient): static
-    {
-        if ($this->idClient->removeElement($idClient)) {
-            // set the owning side to null (unless already changed)
-            if ($idClient->getCommande() === $this) {
-                $idClient->setCommande(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getPrixTotal(): ?int
     {
-        return $this->PrixTotal;
+        return $this->prixTotal;
     }
 
-    public function setPrixTotal(int $PrixTotal): static
+    public function setPrixTotal(int $prixTotal): static
     {
-        $this->PrixTotal = $PrixTotal;
+        $this->prixTotal = $prixTotal;
 
         return $this;
     }
 
     public function getStatue(): ?string
     {
-        return $this->Statue;
+        return $this->statue;
     }
 
-    public function setStatue(string $Statue): static
+    public function setStatue(string $statut): static
     {
-        $this->Statue = $Statue;
+        $this->statue = $statut;
 
         return $this;
     }
 
-    public function getRelationplatCommande(): ?RelationplatCommande
+    public function getClient(): ?Client
     {
-        return $this->relationplatCommande;
+        return $this->client;
     }
 
-    public function setRelationplatCommande(?RelationplatCommande $relationplatCommande): static
+    public function setClient(?Client $client): static
     {
-        $this->relationplatCommande = $relationplatCommande;
+        $this->client = $client;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RelationplatCommande>
+     */
+    public function getRelationplatCommandes(): Collection
+    {
+        return $this->relationplatCommandes;
+    }
+
+    public function addRelationplatCommande(RelationplatCommande $relationplatCommande): static
+    {
+        if (!$this->relationplatCommandes->contains($relationplatCommande)) {
+            $this->relationplatCommandes[] = $relationplatCommande;
+            $relationplatCommande->setCommande($this);
+        }
 
         return $this;
     }
