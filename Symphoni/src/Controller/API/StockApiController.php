@@ -4,6 +4,7 @@ namespace App\Controller\API;
 
 use App\Entity\StockIngredient;
 use App\Entity\Ingredient;
+use App\Attribute\TokenRequired;
 use App\Repository\StockIngredientRepository;
 use App\Repository\IngredientRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\JwtTokenManager;
 
 #[Route('/api/stocks')]
 class StockApiController extends AbstractController
@@ -35,6 +37,7 @@ class StockApiController extends AbstractController
     }
 
     #[Route('', name: 'api_stock_index', methods: ['GET'])]
+    #[TokenRequired]
     public function index(): JsonResponse
     {
         $stocks = $this->repository->findAll();
@@ -42,6 +45,7 @@ class StockApiController extends AbstractController
     }
 
     #[Route('/all', name: 'stock_list', methods: ['GET'])]
+    #[TokenRequired]
     public function getAll(): JsonResponse
     {
         $stocks = $this->repository->findStockWithIngredients();
@@ -49,12 +53,14 @@ class StockApiController extends AbstractController
     }
 
     #[Route('/{id}', name: 'api_stock_show', methods: ['GET'])]
+    #[TokenRequired]
     public function show(StockIngredient $stock): JsonResponse
     {
         return $this->json($stock, Response::HTTP_OK, [], ['groups' => 'stock:read']);
     }
 
     #[Route('/entre', name: 'api_stock_new_entre', methods: ['POST'])]
+    #[TokenRequired]
     public function createEntrer(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -81,6 +87,7 @@ class StockApiController extends AbstractController
     }
 
     #[Route('/sortie', name: 'api_stock_new_sortie', methods: ['POST'])]
+    #[TokenRequired]
     public function createSortie(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -108,6 +115,7 @@ class StockApiController extends AbstractController
 
 
     #[Route('/{id}', name: 'api_stock_edit', methods: ['PUT'])]
+    #[TokenRequired]
     public function update(Request $request, StockIngredient $stock): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -122,6 +130,7 @@ class StockApiController extends AbstractController
     }
 
     #[Route('/{id}', name: 'api_stock_delete', methods: ['DELETE'])]
+    #[TokenRequired]
     public function delete(StockIngredient $stock): JsonResponse
     {
         $this->entityManager->remove($stock);

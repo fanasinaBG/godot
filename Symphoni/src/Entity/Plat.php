@@ -22,6 +22,9 @@ class Plat
     #[ORM\ManyToOne(inversedBy: 'idPlat')]
     private ?RelationplatCommande $relationplatCommande = null;
 
+    #[ORM\OneToOne(inversedBy: 'plat', cascade: ['persist', 'remove'])]
+    private ?Recette $idRecette = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +62,18 @@ class Plat
     public function setRelationplatCommande(?RelationplatCommande $relationplatCommande): static
     {
         $this->relationplatCommande = $relationplatCommande;
+
+        return $this;
+    }
+
+    public function getIdRecette(): ?Recette
+    {
+        return $this->idRecette;
+    }
+
+    public function setIdRecette(?Recette $idRecette): static
+    {
+        $this->idRecette = $idRecette;
 
         return $this;
     }

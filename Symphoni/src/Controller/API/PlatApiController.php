@@ -25,7 +25,7 @@ class PlatApiController extends AbstractController
 
     #[Route('/api/plats', methods: ['GET'])]
     #[TokenRequired]
-    public function getAllPlats(PlatRepository $platRepository,EntityManagerInterface $entityManager): JsonResponse
+    public function getAllPlats(PlatRepository $platRepository): JsonResponse
     {
         $plats = $platRepository->findAll();
         $data = [];
@@ -35,6 +35,8 @@ class PlatApiController extends AbstractController
                 'id' => $plat->getId(),
                 'nom' => $plat->getNom(),
                 'prix' => $plat->getPrix(),
+                'idRecette' => $plat->getIdRecette() ? $plat->getIdRecette()->getId() : null,
+                'relationplatCommande' => $plat->getRelationplatCommande() ? $plat->getRelationplatCommande()->getId() : null,
             ];
         }
 
@@ -43,7 +45,7 @@ class PlatApiController extends AbstractController
 
     #[Route('/api/plats/{id}', methods: ['GET'])]
     #[TokenRequired]
-    public function getPlat(int $id, PlatRepository $platRepository,EntityManagerInterface $entityManager): JsonResponse
+    public function getPlat(int $id, PlatRepository $platRepository): JsonResponse
     {
         $plat = $platRepository->find($id);
 
@@ -55,6 +57,8 @@ class PlatApiController extends AbstractController
             'id' => $plat->getId(),
             'nom' => $plat->getNom(),
             'prix' => $plat->getPrix(),
+            'idRecette' => $plat->getIdRecette() ? $plat->getIdRecette()->getId() : null,
+            'relationplatCommande' => $plat->getRelationplatCommande() ? $plat->getRelationplatCommande()->getId() : null,
         ];
 
         return new JsonResponse($data, Response::HTTP_OK);
@@ -62,12 +66,14 @@ class PlatApiController extends AbstractController
 
     #[Route('/api/plats', methods: ['POST'])]
     #[TokenRequired]
-    public function createPlat(Request $request,EntityManagerInterface $entityManager): JsonResponse
+    public function createPlat(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
         $nom = $data['nom'] ?? null;
         $prix = $data['prix'] ?? null;
+        $idRecette = $data['idRecette'] ?? null;
+        $relationplatCommandeId = $data['relationplatCommande'] ?? null;
 
         if (!$nom || !$prix) {
             return new JsonResponse(['message' => 'Missing data'], Response::HTTP_BAD_REQUEST);
@@ -77,6 +83,20 @@ class PlatApiController extends AbstractController
         $plat->setNom($nom);
         $plat->setPrix($prix);
 
+        if ($idRecette) {
+            $recette = $this->entityManager->getRepository(Recette::class)->find($idRecette);
+            if ($recette) {
+                $plat->setIdRecette($recette);
+            }
+        }
+
+        if ($relationplatCommandeId) {
+            $relationplatCommande = $this->entityManager->getRepository(RelationplatCommande::class)->find($relationplatCommandeId);
+            if ($relationplatCommande) {
+                $plat->setRelationplatCommande($relationplatCommande);
+            }
+        }
+
         $this->entityManager->persist($plat);
         $this->entityManager->flush();
 
@@ -85,7 +105,7 @@ class PlatApiController extends AbstractController
 
     #[Route('/api/plats/{id}', methods: ['PUT'])]
     #[TokenRequired]
-    public function updatePlat(int $id, Request $request, PlatRepository $platRepository,EntityManagerInterface $entityManager): JsonResponse
+    public function updatePlat(int $id, Request $request, PlatRepository $platRepository): JsonResponse
     {
         $plat = $platRepository->find($id);
 
@@ -97,9 +117,25 @@ class PlatApiController extends AbstractController
 
         $nom = $data['nom'] ?? $plat->getNom();
         $prix = $data['prix'] ?? $plat->getPrix();
+        $idRecette = $data['idRecette'] ?? null;
+        $relationplatCommandeId = $data['relationplatCommande'] ?? null;
 
         $plat->setNom($nom);
         $plat->setPrix($prix);
+
+        if ($idRecette) {
+            $recette = $this->entityManager->getRepository(Recette::class)->find($idRecette);
+            if ($recette) {
+                $plat->setIdRecette($recette);
+            }
+        }
+
+        if ($relationplatCommandeId) {
+            $relationplatCommande = $this->entityManager->getRepository(RelationplatCommande::class)->find($relationplatCommandeId);
+            if ($relationplatCommande) {
+                $plat->setRelationplatCommande($relationplatCommande);
+            }
+        }
 
         $this->entityManager->flush();
 
@@ -108,7 +144,7 @@ class PlatApiController extends AbstractController
 
     #[Route('/api/plats/{id}', methods: ['DELETE'])]
     #[TokenRequired]
-    public function deletePlat(int $id, PlatRepository $platRepository,EntityManagerInterface $entityManager): JsonResponse
+    public function deletePlat(int $id, PlatRepository $platRepository): JsonResponse
     {
         $plat = $platRepository->find($id);
 

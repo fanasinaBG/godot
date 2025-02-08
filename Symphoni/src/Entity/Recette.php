@@ -30,6 +30,9 @@ class Recette
     #[ORM\ManyToOne(inversedBy: 'idRecette')]
     private ?RelationIngredientRecette $relationIngredientRecette = null;
 
+    #[ORM\OneToOne(mappedBy: 'idRecette', cascade: ['persist', 'remove'])]
+    private ?Plat $plat = null;
+
     public function __construct()
     {
         $this->idVilany = new ArrayCollection();
@@ -102,6 +105,28 @@ class Recette
     public function setRelationIngredientRecette(?RelationIngredientRecette $relationIngredientRecette): static
     {
         $this->relationIngredientRecette = $relationIngredientRecette;
+
+        return $this;
+    }
+
+    public function getPlat(): ?Plat
+    {
+        return $this->plat;
+    }
+
+    public function setPlat(?Plat $plat): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($plat === null && $this->plat !== null) {
+            $this->plat->setIdRecette(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($plat !== null && $plat->getIdRecette() !== $this) {
+            $plat->setIdRecette($this);
+        }
+
+        $this->plat = $plat;
 
         return $this;
     }
