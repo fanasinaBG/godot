@@ -1,63 +1,81 @@
 <template>
-  <div class="login-container">
-    <h2>Connexion</h2>
-    <form @submit.prevent="login">
-      <div class="input-group">
-        <label for="email">Email</label>
-        <input type="email" v-model="email" required />
-      </div>
+    <!-- <div class="ingredient-detail">
+      <!-- <h1>Détails de l'ingredient</h1>
+      <div v-if="ingredient">
+        <p>ID: {{ ingredient.id }}</p>
+        <p>Nom: {{ ingredient.nom }}</p>
+        <!-- Ajoutez plus de détails si nécessaire -->
+      <!-- </div> -->
+      <!-- <div v-else> -->
+        <!-- <p>Chargement...</p> -->
+      <!-- </div> --> -->
+    <!-- </div> --> -->
 
+    <div class="login-container">
+    <h2>entrer le quantiter</h2>
+    <form @submit.prevent="enregistrer">
       <div class="input-group">
-        <label for="password">Mot de passe</label>
-        <input type="password" v-model="password" required />
+        <label for="entrer">entrer</label>
+        <input type="number" v-model="entrer" required />
       </div>
-
-      <button type="submit">Se connecter</button>
+      <button type="submit">Valider</button>
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </form>
   </div>
-</template>
-
-<script>
-import axios from 'axios';
-export default {
-  data() {
-    return {
-      email: "",
-      password: "",
-      errorMessage: "",
-    };
-  },
-  methods: {
-    async login() {
-      // const fakeUser = { email: "admin@example.com", password: "123456" };
-      console.log({ email: this.email, mdp: this.password });
-
+  </template>
+  
+  <script>
+  import axios from 'axios';
+  
+  export default {
+    data() {
+      return {
+        ingredient: null,  
+        entrer: 0,
+        message:"",
+      };
+    },
+    async created() {
+      const id = this.$route.params.id; 
+      const token = localStorage.getItem('token');
       try {
-
-        const response = await axios.post('http://localhost:8000/api/admins/login', 
-          {email: this.email,mdp: this.password}
-        );
-        if (response.data.token) {
-          console.log("resussit");
-
-          localStorage.setItem("token", response.data.token);
-          console.log("this.$router",this.$router);
-          axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-
-          this.$router.push("/acceuil");
-        } else {
-
-          this.errorMessage = response.data.message || "Email ou mot de passe incorrect.";
-        }
+        const response = await axios.get(`http://localhost:8000/api/ingredients/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        this.ingredient = response.data;  // Stocke l'ingredient récupéré dans la donnée
       } catch (error) {
-        console.error("Erreur lors de la connexion :", error);
-        this.errorMessage = "Erreur lors de la connexion.";
+        console.error("Erreur lors du chargement de l'ingredient:", error);
       }
     },
-  },
-};
-</script>
+    methods: {
+    async enregistrer() {
+      if (!this.ingredient || this.entre <= 0) {
+        this.message = "Veuillez saisir une quantité valide.";
+        return;
+      }
+
+      const token = localStorage.getItem('token');
+
+      try {
+        const response = await axios.post(
+          "http://localhost:8000/api/stocks/entre",
+          { idIngredient: this.ingredient.id, entre: this.entrer },
+          { headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } }
+        );
+
+        this.message = response.data.message;
+        this.entrer = 0; // Réinitialiser le champ après succès
+        this.$router.push('/acceuil');
+      } catch (error) {
+        this.message = "Erreur lors de l'ajout du stock.";
+        console.error(error);
+      }
+     }
+    }
+  };
+  </script>
 
 <style scoped>
 /* Conteneur principal centré */
@@ -179,3 +197,4 @@ body {
   align-items: center;
 }
 </style>
+  

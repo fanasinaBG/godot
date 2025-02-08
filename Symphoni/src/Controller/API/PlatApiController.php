@@ -181,6 +181,8 @@ class PlatApiController extends AbstractController
     #[TokenRequired]
     public function deletePlat(int $id, PlatRepository $platRepository): JsonResponse
     {
+         // Log pour vérifier l'ID reçu
+        error_log("Tentative de suppression du plat avec l'ID : " . $id);
         $plat = $platRepository->find($id);
 
         if (!$plat) {

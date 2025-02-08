@@ -1,39 +1,68 @@
+<script>
+import axios from 'axios';
+import Liste1 from './Liste1.vue';
+import Ingredient from './Ingredient.vue';
+export default {
+  name: 'Liste1', // Nom du composant
+  data() {
+    return {
+      ingredients: [],
+      showListe1: false,
+    };
+  },
+  components: { // Enregistrement du composant ici
+    Ingredient,
+  },
+  methods: {
+      toggleListe1() {
+        this.showListe1 = !this.showListe1;
+        console.log(this.showListe1); // Pour vérifier l'état
+      },
+    },
+  async created() {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.get("http://localhost:8000/api/stocks/all",{
+        headers: {
+          'Authorization': `Bearer ${token}`}
+        });
+      console.log(response.data);
+      this.ingredients = response.data;
+    }catch(error){
+      console.error("Erreur lors du chargement des ingrédients:", error);
+    }
+  },
+};
+</script>
+
 <template>
      <div class="table-container">
         <h1>tableau</h1>
+        <li @click="toggleListe1">
+          <a href="#"> ajout ingredients</a> <!-- Permet de basculer l'état de Liste1 -->
+        </li>
       <table>
         <thead>
           <tr>
             <th>ID</th>
-            <th>Nom</th>
-            <th>Prix</th>
+            <th>entre</th>
+            <th>sortie</th>
+            <th>nom</th>
+            <th>action</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td>Produit A</td>
-            <td>10€</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Produit B</td>
-            <td>15€</td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td>Produit C</td>
-            <td>20€</td>
+          <tr v-for="ingredient in ingredients" :key="ingredient.id">
+            <td>{{ ingredient.id }}</td>
+            <td>{{ ingredient.Entre }}</td>
+            <td>{{ ingredient.Sortie }}</td>
+            <td>{{ ingredient.ingredient.nom }}</td>
           </tr>
         </tbody>
       </table>
     </div>
+    <Ingredient v-if="showListe1" />
 </template>
-<script>
-export default {
-  name: 'Liste1', // Nom du composant
-};
-</script>
 
 <style scoped>
 .table-container {

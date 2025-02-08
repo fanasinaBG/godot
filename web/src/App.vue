@@ -1,5 +1,4 @@
 <script >
-import HelloWorld from './components/HelloWorld.vue'
 import Acceuil from './components/Acceuil.vue'
 import Login from './components/Login.vue'
 

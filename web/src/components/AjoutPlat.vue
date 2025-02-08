@@ -1,63 +1,50 @@
-<template>
-  <div class="login-container">
-    <h2>Connexion</h2>
-    <form @submit.prevent="login">
-      <div class="input-group">
-        <label for="email">Email</label>
-        <input type="email" v-model="email" required />
-      </div>
-
-      <div class="input-group">
-        <label for="password">Mot de passe</label>
-        <input type="password" v-model="password" required />
-      </div>
-
-      <button type="submit">Se connecter</button>
-      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-    </form>
-  </div>
-</template>
-
 <script>
 import axios from 'axios';
-export default {
-  data() {
-    return {
-      email: "",
-      password: "",
-      errorMessage: "",
-    };
-  },
-  methods: {
-    async login() {
-      // const fakeUser = { email: "admin@example.com", password: "123456" };
-      console.log({ email: this.email, mdp: this.password });
-
-      try {
-
-        const response = await axios.post('http://localhost:8000/api/admins/login', 
-          {email: this.email,mdp: this.password}
-        );
-        if (response.data.token) {
-          console.log("resussit");
-
-          localStorage.setItem("token", response.data.token);
-          console.log("this.$router",this.$router);
-          axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-
-          this.$router.push("/acceuil");
-        } else {
-
-          this.errorMessage = response.data.message || "Email ou mot de passe incorrect.";
-        }
-      } catch (error) {
-        console.error("Erreur lors de la connexion :", error);
-        this.errorMessage = "Erreur lors de la connexion.";
-      }
+export default{
+    data() {
+      return {
+        nom: "",  
+        prix: 0,
+      };
     },
-  },
-};
+    methods:{
+     async enregistrerPlats() {
+        const token = localStorage.getItem('token');
+        try {
+        const response = await axios.post(
+          "http://localhost:8000/api/plats",
+          { nom: this.nom, prix: this.prix },
+          { headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } }
+        );
+
+        this.message = response.data.message;
+        this.prix = 0; 
+        this.$router.push('/plats');
+      } catch (error) {
+        this.message = "Erreur lors de l'ajout du stock.";
+        console.error(error);
+      }
+    }
+ }
+}
 </script>
+<template>
+    <h1>Insertion Plats</h1>
+    <form @submit.prevent="enregistrerPlats">
+        <div class="input-group">
+        <label for="nom">nom</label>
+        <input type="text" v-model="nom" required />
+      </div>
+
+      <div class="input-group">
+        <label for="prix">prix</label>
+        <input type="number" v-model="prix" required />
+      </div>
+
+      <button type="submit">Valider</button>
+      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+     </form>
+</template>
 
 <style scoped>
 /* Conteneur principal centré */

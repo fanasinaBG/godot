@@ -1,57 +1,72 @@
 <template>
-    <nav class="navbar">
-      <div class="navbar-brand">Mon Site</div>
-      
-      <!-- Menu principal -->
-      <ul :class="['navbar-menu', { 'active': isMenuOpen }]">
-        <li class="navbar-item"><a href="#">Accueil</a></li>
-        <li class="navbar-item"><a href="#">À propos</a></li>
-        <li class="navbar-item"><a href="#">Services</a></li>
-        <li class="navbar-item"><a href="#">Contact</a></li>
-      </ul>
-    </nav>
-  
-    <!-- Liste fixe à gauche -->
-    <div class="fixed-list">
-      <ul>
-        <li @click="toggleListe1">
-          <a href="#">Lien 1</a> <!-- Permet de basculer l'état de Liste1 -->
-        </li>
-        <li><router-link to="/acceuil">Lien 2</router-link></li>
-        <li><a href="#">Lien 3</a></li>
-      </ul>
-    </div>
-  
-    <!-- Mini-navbar avec barre de recherche -->
-    <div class="search-navbar">
-      <input type="text" placeholder="Rechercher..." class="search-input">
-    </div>
-    <Liste1 v-if="showListe1" />
-  </template>
-  
-  <script>
-  import Liste1 from './Liste1.vue';
-  export default {
-    data() {
-      return {
-        isMenuOpen: false,
-        showListe1: false, 
-      };
-    },
-    components: {
-    Liste1, // Enregistrement du composant ici
+  <nav class="navbar">
+    <div class="navbar-brand">Mon Site</div>
+    <ul class="navbar-menu">
+      <li class="navbar-item"><a href="#">Gestion</a></li>
+      <li class="navbar-item"><a href="#">Statistique</a></li>
+    </ul>
+  </nav>
+
+  <div class="fixed-list">
+    <ul>
+      <li @click="toggleListe1"><a href="#">Stock ingredients</a></li>
+      <li @click="togglePlat"><a href="#">Plats</a></li>
+    </ul>
+  </div>
+
+  <div class="search-navbar">
+    <input type="text" placeholder="Rechercher..." class="search-input">
+  </div>
+
+  <!-- RouterView pour afficher les composants en fonction de la route -->
+  <router-view />
+</template>
+
+<script>
+import { useRoute } from 'vue-router';
+
+export default {
+  data() {
+    return {
+      showListe1: false,
+      showPlat: false,
+    };
   },
-    methods: {
-      toggleMenu() {
-        this.isMenuOpen = !this.isMenuOpen;
-      },
-      toggleListe1() {
-        this.showListe1 = !this.showListe1;
-        console.log(this.showListe1); // Pour vérifier l'état
-      },
+  methods: {
+    // Toggle pour afficher/masquer Liste1
+    toggleListe1() {
+      this.showListe1 = !this.showListe1;
+      this.showPlat = false; // Masquer Plats si on affiche Liste1
+      if (this.showListe1) {
+        this.$router.push('/acceuil'); // Naviguer vers la route /ingredient
+      }
     },
-  };
-  </script>
+    // Toggle pour afficher/masquer Plats
+    togglePlat() {
+      this.showPlat = !this.showPlat;
+      this.showListe1 = false; // Masquer Liste1 si on affiche Plats
+      if (this.showPlat) {
+        this.$router.push('/plats'); // Naviguer vers la route /plats
+      }
+    },
+    // Gérer le changement de route et ajuster l'affichage de Liste1 et Plats
+    handleRouteChange() {
+      const route = this.$route;
+      this.showListe1 = route.path.startsWith('/ingredient');
+      this.showPlat = route.path.startsWith('/plats');
+    }
+  },
+  watch: {
+    // Regarder les changements de route pour ajuster l'affichage
+    '$route': 'handleRouteChange'
+  },
+  mounted() {
+    // Appel de la méthode handleRouteChange au montage du composant
+    this.handleRouteChange();
+  }
+};
+</script>
+
   
   <style scoped>
   /* NAVBAR PRINCIPAL */
