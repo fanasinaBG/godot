@@ -4,9 +4,12 @@ import Acceuil from './components/Acceuil.vue';
 import Login from './components/Login.vue';
 
 const routes = [
+  { path: '/', redirect: '/login' },
+  { path: '/acceuil', component: Acceuil,children: [
+    { path: '', component: Liste1 }
+  ]},
   { path: '/login', component: Login },
-  { path: '/liste1', component: Liste1 },
-  { path: '/acceuil', component: Acceuil, meta: { requiresAuth: true } },
+
 ];
 
 const router = createRouter({
@@ -15,13 +18,20 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = localStorage.getItem("isAuthenticated");
-  
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    next("/login"); // Redirige vers la page de connexion si non authentifié
+  const isAuthenticated = !!localStorage.getItem("token");
+
+  console.log("isAuthenticated:", isAuthenticated);
+  console.log("Navigating to:", to.path);
+
+  if (to.path === "/acceuil" && !isAuthenticated) {
+    console.log("Redirection vers /login");
+    next("/"); // 
   } else {
-    next(); // Autorise la navigation
+    console.log("navigation autorisez");
+    next(); //
   }
 });
+
+
 
 export default router;

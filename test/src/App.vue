@@ -15,7 +15,7 @@ export default {
   <div class="container">
     <header>
     </header>
-    <Login />
+    <router-view />
 
     <main>
     </main>

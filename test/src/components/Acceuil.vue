@@ -14,7 +14,9 @@
     <!-- Liste fixe à gauche -->
     <div class="fixed-list">
       <ul>
-        <li><router-link to="/liste1">Lien 1</router-link></li>
+        <li @click="showListe1 = !showListe1">
+          <a href="#">Lien 1</a> <!-- Permet de basculer l'état de Liste1 -->
+        </li>
         <li><router-link to="/acceuil">Lien 2</router-link></li>
         <li><a href="#">Lien 3</a></li>
       </ul>
@@ -24,14 +26,16 @@
     <div class="search-navbar">
       <input type="text" placeholder="Rechercher..." class="search-input">
     </div>
-    <router-view />
+    <Liste1 v-if="showListe1" />
   </template>
   
   <script>
+  import Liste1 from './Liste1.vue';
   export default {
     data() {
       return {
         isMenuOpen: false,
+        showListe1: false, 
       };
     },
     methods: {
