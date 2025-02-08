@@ -14,7 +14,7 @@
     <!-- Liste fixe à gauche -->
     <div class="fixed-list">
       <ul>
-        <li @click="showListe1 = !showListe1">
+        <li @click="toggleListe1">
           <a href="#">Lien 1</a> <!-- Permet de basculer l'état de Liste1 -->
         </li>
         <li><router-link to="/acceuil">Lien 2</router-link></li>
@@ -38,9 +38,16 @@
         showListe1: false, 
       };
     },
+    components: {
+    Liste1, // Enregistrement du composant ici
+  },
     methods: {
       toggleMenu() {
         this.isMenuOpen = !this.isMenuOpen;
+      },
+      toggleListe1() {
+        this.showListe1 = !this.showListe1;
+        console.log(this.showListe1); // Pour vérifier l'état
       },
     },
   };
