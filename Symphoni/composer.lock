@@ -4,10 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-
-    "content-hash": "97419eb3db382b17bf7602e83008dde2",
-
-   
+    "content-hash": "c1e914afb4ee50c7cf29e90dfd9c979d",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1300,8 +1297,6 @@
             "time": "2025-01-24T11:45:48+00:00"
         },
         {
-<<<<<<< HEAD
-=======
             "name": "lcobucci/clock",
             "version": "3.3.1",
             "source": {
@@ -1439,7 +1434,6 @@
             "time": "2025-01-26T21:29:45+00:00"
         },
         {
->>>>>>> 0bb661afb65102fc84b6c86edf9c192664dc088d
             "name": "nelmio/cors-bundle",
             "version": "2.5.0",
             "source": {
@@ -1502,8 +1496,6 @@
             "time": "2024-06-24T21:25:28+00:00"
         },
         {
-<<<<<<< HEAD
-=======
             "name": "phpdocumentor/reflection-common",
             "version": "2.2.0",
             "source": {
@@ -1726,7 +1718,6 @@
             "time": "2024-10-13T11:29:49+00:00"
         },
         {
->>>>>>> 0bb661afb65102fc84b6c86edf9c192664dc088d
             "name": "psr/cache",
             "version": "3.0.0",
             "source": {

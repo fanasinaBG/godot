@@ -1,5 +1,4 @@
 <template>
-<<<<<<< HEAD:test/src/components/Login.vue
   <div class="login-container">
     <h2>Connexion</h2>
     <form @submit.prevent="login">
@@ -32,20 +31,19 @@ export default {
   methods: {
     async login() {
       // const fakeUser = { email: "admin@example.com", password: "123456" };
+      console.log({ email: this.email, mdp: this.password });
 
       try {
 
         const response = await axios.post('http://localhost:8000/api/admins/login', 
-          {email: this.email,mdp: this.password},
-          { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } }
-          
+          {email: this.email,mdp: this.password}
         );
         if (response.data.token) {
           console.log("resussit");
 
           localStorage.setItem("token", response.data.token);
           console.log("this.$router",this.$router);
-          console.log("Token enregistré :", localStorage.getItem("token"));
+          axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
 
           this.$router.push("/acceuil");
         } else {
