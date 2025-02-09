@@ -82,7 +82,7 @@ class CommandeController extends AbstractController
                 'id' => $commande->getId(),
                 'prix_total' => $commande->getPrixTotal(),
                 'statue' => $commande->getStatue(),
-                'client_id' => $commande->getClient()->getId(),
+                'client_nom' => $commande->getClient()->getNom(),
                 'relationplat_commandes' => $commande->getRelationplatCommandes()->toArray(),
             ];
         }
