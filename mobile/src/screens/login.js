@@ -45,7 +45,12 @@ const LoginScreen = ({ navigation }) => {
         secureTextEntry
       />
       {/*  */}
-      <Button title="Se connecter" /*onPress={handleLogin}   *//>
+      <Button 
+        title="Se connecter" 
+        /*onPress={handleLogin}   */
+        onPress={() => navigation.navigate('List')}
+
+      />
       <Button
         title="S'inscrire"
         onPress={() => navigation.navigate('Inscription')}
