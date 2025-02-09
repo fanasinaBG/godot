@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import{ signUp, signIn, logOut }from './../services/authService';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -25,6 +26,15 @@ const LoginScreen = ({ navigation }) => {
 //       Alert.alert('Erreur', 'Une erreur est survenue lors de la connexion');
 //     }
 //   };
+  const handleSignIn = () => {
+    signIn(email, password)
+      .then(() =>{ 
+        Alert.alert("Connexion réussie !");
+        navigation.navigate('List');
+      }
+      )
+      .catch((error) => Alert.alert("Erreur :", error.message));
+  };
 
   return (
     <View style={styles.container}>
@@ -48,7 +58,7 @@ const LoginScreen = ({ navigation }) => {
       <Button 
         title="Se connecter" 
         /*onPress={handleLogin}   */
-        onPress={() => navigation.navigate('List')}
+        onPress={handleSignIn}
 
       />
       <Button
