@@ -91,6 +91,9 @@ class PlatApiController extends AbstractController
             }
         }
 
+
+        
+
         if ($relationplatCommandeId) {
             $relationplatCommande = $this->entityManager->getRepository(RelationplatCommande::class)->find($relationplatCommandeId);
             if ($relationplatCommande) {
