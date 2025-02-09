@@ -2,8 +2,8 @@
   <nav class="navbar">
     <div class="navbar-brand">Mon Site</div>
     <ul class="navbar-menu">
-      <li class="navbar-item"><a href="#">Gestion</a></li>
-      <li class="navbar-item"><a href="#">Statistique</a></li>
+      <li class="navbar-item" @click="toggleListe1"><a href="#">Gestion</a></li>
+      <li class="navbar-item"  @click="toggleStatistique"><a href="#">Statistique</a></li>
     </ul>
   </nav>
 
@@ -30,6 +30,7 @@ export default {
     return {
       showListe1: false,
       showPlat: false,
+      statistique: false,
     };
   },
   methods: {
@@ -37,6 +38,8 @@ export default {
     toggleListe1() {
       this.showListe1 = !this.showListe1;
       this.showPlat = false; // Masquer Plats si on affiche Liste1
+      this.statistique = false; 
+      
       if (this.showListe1) {
         this.$router.push('/acceuil'); // Naviguer vers la route /ingredient
       }
@@ -45,8 +48,17 @@ export default {
     togglePlat() {
       this.showPlat = !this.showPlat;
       this.showListe1 = false; // Masquer Liste1 si on affiche Plats
+      this.statistique = false;
       if (this.showPlat) {
         this.$router.push('/plats'); // Naviguer vers la route /plats
+      }
+    },
+    toggleStatistique() {
+      this.statistique = !this.statistique;
+      this.showListe1 = false; // Masquer Liste1 si on affiche Plats
+      this.showPlat = false;
+      if (this.statistique) {
+        this.$router.push('/statistique'); // Naviguer vers la route /plats
       }
     },
     // Gérer le changement de route et ajuster l'affichage de Liste1 et Plats
@@ -54,6 +66,7 @@ export default {
       const route = this.$route;
       this.showListe1 = route.path.startsWith('/ingredient');
       this.showPlat = route.path.startsWith('/plats');
+      this.statistique = route.path.startsWith('/statistique');
     }
   },
   watch: {

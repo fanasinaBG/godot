@@ -38,7 +38,7 @@
            <td>{{ ingredient.id }}</td>
            <td>{{ ingredient.nom }}</td>
            <td>
-            <router-link :to="'/ingredient/' + ingredient.id">+ ajout</router-link>
+            <router-link :to="'/ingredient/' + ingredient.id">+ ajout entrer</router-link>
         </td>
          </tr>
        </tbody>

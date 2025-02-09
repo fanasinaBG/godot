@@ -2,21 +2,27 @@
 import axios from 'axios';
 import Liste1 from './Liste1.vue';
 import Ingredient from './Ingredient.vue';
+import IngredientListe from './IngredientListe.vue';
 export default {
-  name: 'Liste1', // Nom du composant
+  name: 'Liste1',// Nom du composant
   data() {
     return {
       ingredients: [],
       showListe1: false,
+      showListe2: false,
     };
   },
   components: { // Enregistrement du composant ici
     Ingredient,
+    IngredientListe,
   },
   methods: {
       toggleListe1() {
         this.showListe1 = !this.showListe1;
         console.log(this.showListe1); // Pour vérifier l'état
+      },
+      toggleListe2() {
+        this.$router.push('/ingredientListe'); // Pour vérifier l'état
       },
     },
   async created() {
@@ -39,7 +45,11 @@ export default {
      <div class="table-container">
         <h1>tableau</h1>
         <li @click="toggleListe1">
-          <a href="#"> ajout ingredients</a> <!-- Permet de basculer l'état de Liste1 -->
+          <a href="#"> ajout entrer ingredients</a> 
+        </li>
+
+        <li @click="toggleListe2">
+          <a href="#"> ajout ingredients</a> 
         </li>
       <table>
         <thead>

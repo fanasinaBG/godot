@@ -13,6 +13,7 @@
       </div>
 
       <button type="submit">Se connecter</button>
+      <router-link :to="'/logFront/' " class="btn-update">Front Office</router-link>
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </form>
   </div>

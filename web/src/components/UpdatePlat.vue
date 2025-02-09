@@ -31,7 +31,7 @@ methods: {
 }
 </script>
 <template>
-    <h1>hello</h1>
+    <h1>update plat</h1>
     <form @submit.prevent="update">
       <div class="input-group">
         <label for="nom">nom</label>

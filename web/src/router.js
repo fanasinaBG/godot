@@ -7,9 +7,18 @@ import IngredientDetail from './components/IngredientDetail.vue';
 import Plats from './components/Plats.vue';
 import AjoutPlat from './components/AjoutPlat.vue';
 import UpdatePlat from './components/UpdatePlat.vue';
+import IngredientListe from './components/IngredientListe.vue';
+import LogFront from './components/LogFront.vue';
+import AcceuilFront from './components/AcceuilFront.vue';
+import ListeClient from './components/ListeClient.vue';
+import Commande from './components/Commande.vue';
+import Statistique from './components/Statistique.vue';
+
+
+
 
 const routes = [
-  { path: '/', redirect: '/login' },
+  { path: '/', redirect: '/logFront' },
   { path: '/acceuil', component: Acceuil,children: [
     { path: '', component: Liste1  },
     { path: '/ingredient', component: Ingredient  },
@@ -17,9 +26,17 @@ const routes = [
     { path: '/plats', component: Plats  },
     { path: '/ajoutPlat', component: AjoutPlat },
     { path: '/updatePlat/:id', component: UpdatePlat, name: 'updatePlat' },
+    { path: '/ingredientListe', component: IngredientListe },
+    { path: '/statistique', component: Statistique },
   ]},
-
+  { path: '/acceuilFront', component: AcceuilFront,children: [
+    { path: '', component: ListeClient  },
+    { path: '/Commande', component: Commande },
+   ]},
   { path: '/login', component: Login },
+  { path: '/listeClient', component: ListeClient },
+  { path: '/logFront', component: LogFront },
+  
 
 ];
 
