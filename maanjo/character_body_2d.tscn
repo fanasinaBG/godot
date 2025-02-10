@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://bfc1r6d3jb4t1"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ljlog"]
+resource_local_to_scene = true
+
+[node name="CharacterBody2D" type="CharacterBody2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_ljlog")
